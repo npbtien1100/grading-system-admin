@@ -5,7 +5,7 @@ import { Box, Card, Link, Container, Typography } from "@mui/material";
 // components
 import Page from "../components/Page";
 import { MHidden } from "../components/@material-extend";
-import { RegisterForm } from "../components/authentication/register";
+import CreateAdminForm from "../components/_dashboard/admin/CreateAdminForm";
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ export default function CreateAdmin() {
 
       <Container>
         <ContentStyle>
-          <RegisterForm />
+          <CreateAdminForm />
         </ContentStyle>
       </Container>
     </RootStyle>

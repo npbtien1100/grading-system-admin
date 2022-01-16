@@ -8,9 +8,7 @@ import {
   Divider,
   Grid,
   TextField,
-  InputLabel,
   MenuItem,
-  Select,
 } from "@mui/material";
 
 export default function UserProfileDetail({ userDetail }) {
@@ -39,6 +37,7 @@ export default function UserProfileDetail({ userDetail }) {
                 fullWidth
                 label="Student Id"
                 name="studentId"
+                type="number"
                 onChange={handleChange}
                 value={values.studentId}
                 variant="outlined"
