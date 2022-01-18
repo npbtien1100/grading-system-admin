@@ -1,7 +1,6 @@
-import { Link as RouterLink } from "react-router-dom";
 // material
 import { styled } from "@mui/material/styles";
-import { Box, Card, Link, Container, Typography } from "@mui/material";
+import { Card, Container, Typography } from "@mui/material";
 // components
 import Page from "../components/Page";
 import { MHidden } from "../components/@material-extend";
