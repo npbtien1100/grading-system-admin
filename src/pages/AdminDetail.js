@@ -2,16 +2,37 @@ import { Box, Container, Grid, Typography, Button } from "@mui/material";
 import { useParams, Link as RouterLink } from "react-router-dom";
 import AccountProfile from "../components/account/account-profile";
 import AdminProfileDetails from "src/components/_dashboard/admin/AdminDetail";
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import axiosClient from "src/api/axiosClient";
+import { setErrorMsg } from "src/redux/alert";
 
 export default function AdminDetail() {
-  const adminInfo = {
-    fullName: "Katarina Smith",
-    email: "demo@devias.io",
-    phone: "123456",
-    image: "/static/mock-images/avatars/avatar_default.jpg",
-    address: "Los Angeles USA",
-  };
   const { adminId } = useParams();
+  const [adminInfo, setAdminInfo] = useState({
+    address: "",
+    createdAt: "",
+    email: "",
+    fullName: "",
+    id: "",
+    phone: "",
+  });
+  const dispatch = useDispatch();
+
+  async function fetchAPI() {
+    try {
+      const res = await axiosClient.get(`/api/admin/${adminId}`);
+      setAdminInfo({ ...res.data });
+    } catch (error) {
+      if (error.response.data) {
+        dispatch(setErrorMsg(error.response.data.message));
+      } else console.log(error);
+    }
+  }
+  useEffect(() => {
+    fetchAPI();
+  }, []);
+
   return (
     <>
       <Box
@@ -36,7 +57,10 @@ export default function AdminDetail() {
           </Typography>
           <Grid container spacing={3}>
             <Grid item lg={4} md={6} xs={12}>
-              <AccountProfile userDetail={adminInfo} />
+              <AccountProfile
+                userDetail={adminInfo}
+                image={"/static/mock-images/avatars/avatar_1.jpg"}
+              />
             </Grid>
             <Grid item lg={8} md={6} xs={12}>
               <AdminProfileDetails adminDetail={adminInfo} />

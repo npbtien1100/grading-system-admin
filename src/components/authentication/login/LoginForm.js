@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import axiosClient from "src/api/axiosClient";
-import { setIsAuthenticated, setToken } from "src/redux/user";
+import { setIsAuthenticated, setToken, setUser } from "src/redux/user";
 import { setErrorMsg } from "src/redux/alert";
 import { useDispatch } from "react-redux";
 // ----------------------------------------------------------------------
@@ -42,21 +42,20 @@ export default function LoginForm() {
     },
     validationSchema: LoginSchema,
     onSubmit: async () => {
-      // event.preventDefault();
       try {
         const res = await axiosClient.post("/api/admin/login", {
           email: values.email,
           password: values.password,
         });
-        console.log(res.data);
-        const { token } = res.data;
+        const { token, user } = res.data;
         localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
         dispatch(setToken(token));
+        dispatch(setUser(JSON.stringify(user)));
         dispatch(setIsAuthenticated(true));
 
         navigate("/dashboard", { replace: true });
       } catch (error) {
-        console.log(error.response);
         if (error.response.data.message) {
           dispatch(setErrorMsg(error.response.data.message));
         } else console.log(error);

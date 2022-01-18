@@ -30,10 +30,10 @@ export default function ClassItem({ clss }) {
           gutterBottom
           variant="h5"
         >
-          {clss.title}
+          {clss.className}
         </Typography>
         <Typography align="center" color="textPrimary" variant="body1">
-          {clss.description}
+          {clss.classSection}
         </Typography>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
@@ -58,7 +58,7 @@ export default function ClassItem({ clss }) {
               sx={{ pl: 1 }}
               variant="body2"
             >
-              {clss.createdAt}
+              {new Date(clss.createdAt).toLocaleString()}
             </Typography>
           </Grid>
           <Grid
@@ -79,7 +79,7 @@ export default function ClassItem({ clss }) {
               sx={{ pl: 1 }}
               variant="body2"
             >
-              {clss.totalDownloads} Members
+              {clss.total_members} Members
             </Typography>
           </Grid>
         </Grid>

@@ -4,16 +4,17 @@ import { Icon } from "@iconify/react";
 import { useFormik, Form, FormikProvider } from "formik";
 import eyeFill from "@iconify/icons-eva/eye-fill";
 import eyeOffFill from "@iconify/icons-eva/eye-off-fill";
-import { useNavigate } from "react-router-dom";
 // material
 import { Stack, TextField, IconButton, InputAdornment } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-
+import { setErrorMsg, setSuccessMsg } from "src/redux/alert";
+import { useDispatch } from "react-redux";
+import axiosClient from "src/api/axiosClient";
 // ----------------------------------------------------------------------
 
 export default function CreateAdminForm() {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
 
   const RegisterSchema = Yup.object().shape({
     fullName: Yup.string()
@@ -37,13 +38,26 @@ export default function CreateAdminForm() {
       address: "",
     },
     validationSchema: RegisterSchema,
-    onSubmit: () => {
-      navigate("/dashboard/admins", { replace: true });
+    onSubmit: async () => {
+      try {
+        const res = await axiosClient.post("/api/admin/", {
+          fullName: values.fullName,
+          email: values.email,
+          password: values.password,
+          phone: values.phone,
+          address: values.address ? values.address : undefined,
+        });
+        dispatch(setSuccessMsg(res.data.message));
+      } catch (error) {
+        if (error.response.data && error.response.data.message) {
+          dispatch(setErrorMsg(error.response.data.message));
+        } else console.log(error);
+      }
     },
   });
 
-  const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
-
+  const { errors, touched, values, handleSubmit, isSubmitting, getFieldProps } =
+    formik;
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>

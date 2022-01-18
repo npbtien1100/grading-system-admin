@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -13,6 +13,10 @@ import {
 export default function ClassDetailForm({ classDetail }) {
   const [values, setValues] = useState(classDetail);
 
+  useEffect(() => {
+    setValues({ ...classDetail });
+  }, [classDetail]);
+
   const handleChange = (event) => {
     setValues({
       ...values,
@@ -22,7 +26,6 @@ export default function ClassDetailForm({ classDetail }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Submit form");
   };
 
   return (
@@ -50,7 +53,7 @@ export default function ClassDetailForm({ classDetail }) {
                 name="classSection"
                 onChange={handleChange}
                 disabled
-                value={values.classSection}
+                value={values.classSection ? values.classSection : ""}
                 variant="outlined"
               />
             </Grid>
@@ -61,7 +64,7 @@ export default function ClassDetailForm({ classDetail }) {
                 name="subject"
                 onChange={handleChange}
                 disabled
-                value={values.subject}
+                value={values.subject ? values.subject : ""}
                 variant="outlined"
               />
             </Grid>
@@ -72,7 +75,7 @@ export default function ClassDetailForm({ classDetail }) {
                 name="room"
                 onChange={handleChange}
                 disabled
-                value={values.room}
+                value={values.room ? values.room : ""}
                 variant="outlined"
               />
             </Grid>
@@ -83,7 +86,7 @@ export default function ClassDetailForm({ classDetail }) {
                 name="studentJoinCode"
                 onChange={handleChange}
                 disabled
-                value={values.studentJoinCode}
+                value={values.studentJoinCode ? values.studentJoinCode : ""}
                 variant="outlined"
               />
             </Grid>
@@ -94,7 +97,7 @@ export default function ClassDetailForm({ classDetail }) {
                 name="teacherJoinCode"
                 onChange={handleChange}
                 disabled
-                value={values.teacherJoinCode}
+                value={values.teacherJoinCode ? values.teacherJoinCode : ""}
                 variant="outlined"
               />
             </Grid>
@@ -105,7 +108,7 @@ export default function ClassDetailForm({ classDetail }) {
                 name="createdAt"
                 onChange={handleChange}
                 disabled
-                value={values.createdAt}
+                value={new Date(values.createdAt).toLocaleString()}
                 variant="outlined"
               />
             </Grid>
@@ -116,7 +119,7 @@ export default function ClassDetailForm({ classDetail }) {
                 name="updatedAt"
                 onChange={handleChange}
                 disabled
-                value={values.updatedAt}
+                value={new Date(values.updatedAt).toLocaleString()}
                 variant="outlined"
               />
             </Grid>

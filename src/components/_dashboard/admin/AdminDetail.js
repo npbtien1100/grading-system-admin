@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -13,6 +13,10 @@ import {
 export default function AdminProfileDetails({ adminDetail }) {
   const [values, setValues] = useState(adminDetail);
 
+  useEffect(() => {
+    setValues({ ...adminDetail });
+  }, [adminDetail]);
+
   const handleChange = (event) => {
     setValues({
       ...values,
@@ -22,7 +26,6 @@ export default function AdminProfileDetails({ adminDetail }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Submit form");
   };
 
   return (

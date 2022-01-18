@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -10,9 +10,17 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
+import axiosClient from "src/api/axiosClient";
+import { setErrorMsg, setSuccessMsg } from "src/redux/alert";
+import { useDispatch } from "react-redux";
 
 export default function UserProfileDetail({ userDetail }) {
   const [values, setValues] = useState(userDetail);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setValues({ ...userDetail });
+  }, [userDetail]);
 
   const handleChange = (event) => {
     setValues({
@@ -21,9 +29,19 @@ export default function UserProfileDetail({ userDetail }) {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Submit form");
+    try {
+      const res = await axiosClient.put(`/api/admin/users/${values.id}`, {
+        studentId: values.student_id ? values.student_id : null,
+        isLock: values.isLock,
+      });
+      dispatch(setSuccessMsg(res.data.message));
+    } catch (error) {
+      if (error.response.data && error.response.data.message) {
+        dispatch(setErrorMsg(error.response.data.message));
+      } else console.log(error);
+    }
   };
   return (
     <form autoComplete="off" onSubmit={handleSubmit}>
@@ -36,10 +54,10 @@ export default function UserProfileDetail({ userDetail }) {
               <TextField
                 fullWidth
                 label="Student Id"
-                name="studentId"
+                name="student_id"
                 type="number"
                 onChange={handleChange}
-                value={values.studentId}
+                value={values.student_id ? values.student_id : ""}
                 variant="outlined"
               />
             </Grid>
@@ -49,7 +67,7 @@ export default function UserProfileDetail({ userDetail }) {
                 label="Name"
                 name="name"
                 onChange={handleChange}
-                value={values.name}
+                value={values.name ? values.name : ""}
                 variant="outlined"
                 disabled
               />
@@ -61,7 +79,7 @@ export default function UserProfileDetail({ userDetail }) {
                 name="email"
                 type="email"
                 onChange={handleChange}
-                value={values.email}
+                value={values.email ? values.email : ""}
                 variant="outlined"
                 disabled
               />
@@ -72,7 +90,7 @@ export default function UserProfileDetail({ userDetail }) {
                 label="Phone Number"
                 name="phone"
                 onChange={handleChange}
-                value={values.phone}
+                value={values.phone ? values.phone : ""}
                 variant="outlined"
                 disabled
               />
@@ -83,7 +101,7 @@ export default function UserProfileDetail({ userDetail }) {
                 label="Mail secret code"
                 name="mailSecretCode"
                 onChange={handleChange}
-                value={values.mailSecretCode}
+                value={values.mailSecretCode ? values.mailSecretCode : ""}
                 variant="outlined"
                 disabled
               />
@@ -94,7 +112,7 @@ export default function UserProfileDetail({ userDetail }) {
                 label="Register Type"
                 name="registerType"
                 onChange={handleChange}
-                value={values.registerType}
+                value={values.registerType ? values.registerType : ""}
                 variant="outlined"
                 disabled
               />
@@ -108,8 +126,8 @@ export default function UserProfileDetail({ userDetail }) {
                 value={values.isLock}
                 onChange={handleChange}
               >
-                <MenuItem value={0}>False</MenuItem>
-                <MenuItem value={1}>True</MenuItem>
+                <MenuItem value={false}>False</MenuItem>
+                <MenuItem value={true}>True</MenuItem>
               </TextField>
             </Grid>
             <Grid item md={6} xs={12}>
@@ -129,7 +147,7 @@ export default function UserProfileDetail({ userDetail }) {
                 label="Created at"
                 name="createdAt"
                 onChange={handleChange}
-                value={values.createdAt}
+                value={new Date(values.createdAt).toLocaleString()}
                 variant="outlined"
                 disabled
               />
@@ -140,7 +158,7 @@ export default function UserProfileDetail({ userDetail }) {
                 label="Updated at"
                 name="updatedAt"
                 onChange={handleChange}
-                value={values.updatedAt}
+                value={new Date(values.updatedAt).toLocaleString()}
                 variant="outlined"
                 disabled
               />

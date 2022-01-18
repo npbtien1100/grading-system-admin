@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import axiosClient from "src/api/axiosClient";
+import { setErrorMsg } from "src/redux/alert";
+
 import { Icon } from "@iconify/react";
 import plusFill from "@iconify/icons-eva/plus-fill";
 import { Link as RouterLink } from "react-router-dom";
@@ -18,76 +22,34 @@ const SORT_OPTIONS = [
 ];
 
 // ----------------------------------------------------------------------
-const mockclasses = [
-  {
-    id: 1,
-    createdAt: "2021-11-22 09:46:28",
-    description:
-      "Dropbox is a file hosting service that offers cloud storage, file synchronization, a personal cloud.",
-    media: "/static/images/products/product_1.png",
-    title: "Dropbox",
-    totalDownloads: "594",
-  },
-  {
-    id: 2,
-    createdAt: "2021-11-20 09:46:28",
-    description:
-      "Medium is an online publishing platform developed by Evan Williams, and launched in August 2012.",
-    media: "/static/images/products/product_2.png",
-    title: "Medium Corporation",
-    totalDownloads: "625",
-  },
-  {
-    id: 3,
-    createdAt: "2021-11-23 09:46:28",
-    description:
-      "Slack is a cloud-based set of team collaboration tools and services, founded by Stewart Butterfield.",
-    media: "/static/images/products/product_3.png",
-    title: "Slack",
-    totalDownloads: "857",
-  },
-  {
-    id: 4,
-    createdAt: "2021-12-3 09:46:28",
-    description:
-      "Lyft is an on-demand transportation company based in San Francisco, California.",
-    media: "/static/images/products/product_4.png",
-    title: "Lyft",
-    totalDownloads: "406",
-  },
-  {
-    id: 5,
-    createdAt: "2021-12-1 09:46:28",
-    description:
-      "GitHub is a web-based hosting service for version control of code using Git.",
-    media: "/static/images/products/product_5.png",
-    title: "GitHub",
-    totalDownloads: "835",
-  },
-  {
-    id: 6,
-    createdAt: "2021-12-24 09:46:28",
-    description:
-      "Squarespace provides software as a service for website building and hosting. Headquartered in NYC.",
-    media: "/static/images/products/product_6.png",
-    title: "Squarespace",
-    totalDownloads: "835",
-  },
-];
 
 export default function Class() {
-  const [classes, setClasses] = useState(mockclasses);
+  const [classes, setClasses] = useState([]);
   const [sortOrder, setSortOrder] = useState("latest");
+
+  const dispatch = useDispatch();
+
+  async function fetchAPI() {
+    try {
+      const res = await axiosClient.get("/api/admin/classes");
+      setClasses([...res.data]);
+    } catch (error) {
+      if (error.response.data) {
+        dispatch(setErrorMsg(error.response.data.message));
+      } else console.log(error);
+    }
+  }
+  useEffect(() => {
+    fetchAPI();
+  }, []);
+
   const handleSortByDate = (event) => {
-    console.log(event.target.value);
-    console.log(classes);
     const tempClasses = [...classes];
     tempClasses.sort((a, b) =>
       event.target.value === "oldest"
         ? new Date(a.createdAt) - new Date(b.createdAt)
         : new Date(b.createdAt) - new Date(a.createdAt)
     );
-    console.log(tempClasses);
     setSortOrder(event.target.value);
     setClasses(tempClasses);
   };

@@ -2,18 +2,40 @@ import { Box, Container, Grid, Typography, Button } from "@mui/material";
 import { useParams, Link as RouterLink } from "react-router-dom";
 import ClassDetailForm from "src/components/_dashboard/class/ClassDetail";
 
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import axiosClient from "src/api/axiosClient";
+import { setErrorMsg } from "src/redux/alert";
+
 export default function ClassDetail() {
   const { classId } = useParams();
-  const classDetail = {
-    className: "Class name",
-    classSection: "Class section",
-    subject: "Class subject",
-    room: "Class room",
-    studentJoinCode: "student join code",
-    teacherJoinCode: "teacher join code",
-    createdAt: "Created at",
-    updatedAt: "Updated at",
-  };
+  const [classDetail, setClassDetail] = useState({
+    className: "",
+    classSection: "",
+    subject: "",
+    room: "",
+    studentJoinCode: "",
+    teacherJoinCode: "",
+    createdAt: "",
+    updatedAt: "",
+  });
+
+  const dispatch = useDispatch();
+
+  async function fetchAPI() {
+    try {
+      const res = await axiosClient.get(`/api/admin/classes/${classId}`);
+
+      setClassDetail({ ...res.data });
+    } catch (error) {
+      if (error.response.data && error.response.data.message) {
+        dispatch(setErrorMsg(error.response.data.message));
+      } else console.log(error);
+    }
+  }
+  useEffect(() => {
+    fetchAPI();
+  }, []);
   return (
     <>
       <Box

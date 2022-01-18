@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,9 +9,18 @@ import {
   Grid,
   TextField,
 } from "@mui/material";
+import axiosClient from "src/api/axiosClient";
+import { setErrorMsg, setSuccessMsg } from "src/redux/alert";
+import { useDispatch } from "react-redux";
+import { setUser } from "src/redux/user";
 
-export default function AccountProfileDetails({ userDetail }) {
+export default function AccountProfileDetails({ userDetail, onChange }) {
   const [values, setValues] = useState(userDetail);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setValues({ ...userDetail });
+  }, [userDetail]);
 
   const handleChange = (event) => {
     setValues({
@@ -20,9 +29,24 @@ export default function AccountProfileDetails({ userDetail }) {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Submit form");
+    try {
+      const res = await axiosClient.put(`/api/admin/${values.id}`, {
+        fullName: values.fullName,
+        phone: values.phone ? values.phone : null,
+        address: values.address,
+      });
+      onChange({ ...values });
+
+      localStorage.setItem("user", JSON.stringify(values));
+      dispatch(setUser(JSON.stringify(values)));
+      dispatch(setSuccessMsg(res.data.message));
+    } catch (error) {
+      if (error.response.data && error.response.data.message) {
+        dispatch(setErrorMsg(error.response.data.message));
+      } else console.log(error);
+    }
   };
 
   return (
@@ -39,7 +63,7 @@ export default function AccountProfileDetails({ userDetail }) {
                 name="fullName"
                 onChange={handleChange}
                 required
-                value={values.fullName}
+                value={values.fullName ? values.fullName : ""}
                 variant="outlined"
               />
             </Grid>
@@ -52,7 +76,7 @@ export default function AccountProfileDetails({ userDetail }) {
                 onChange={handleChange}
                 required
                 disabled
-                value={values.email}
+                value={values.email ? values.email : ""}
                 variant="outlined"
               />
             </Grid>
@@ -62,7 +86,8 @@ export default function AccountProfileDetails({ userDetail }) {
                 label="Phone Number"
                 name="phone"
                 onChange={handleChange}
-                value={values.phone}
+                type="number"
+                value={values.phone ? values.phone : ""}
                 variant="outlined"
               />
             </Grid>
@@ -72,7 +97,7 @@ export default function AccountProfileDetails({ userDetail }) {
                 label="Address"
                 name="address"
                 onChange={handleChange}
-                value={values.address}
+                value={values.address ? values.address : ""}
                 variant="outlined"
               />
             </Grid>

@@ -32,7 +32,7 @@ export default function UserProfile({ userDetail }) {
             {userDetail.name}
           </Typography>
           <Typography color="textSecondary" variant="body2">
-            {userDetail.studentId}
+            {userDetail.student_id}
           </Typography>
           <Typography color="textSecondary" variant="body2">
             GMT+0700

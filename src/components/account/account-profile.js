@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 
-export default function AccountProfile({ userDetail }) {
+export default function AccountProfile({ userDetail, image }) {
   return (
     <Card>
       <CardContent>
@@ -21,7 +21,7 @@ export default function AccountProfile({ userDetail }) {
           }}
         >
           <Avatar
-            src={userDetail.image}
+            src={image}
             sx={{
               height: 64,
               mb: 2,
